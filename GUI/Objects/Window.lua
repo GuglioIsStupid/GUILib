@@ -129,44 +129,44 @@ function Window.mousemoved(self, x, y, dx, dy)
             self.y = y - self.draggingY
         end
         
-        local hoveringCorner = false
-        local hoveringTopOrBottom = false
-        local hoveringLeftOrRight = false
-
-        if x > self.x and x < self.x + 10 then
-            hoveringLeftOrRight = true
-        elseif x > self.x + self.w - 10 and x < self.x + self.w then
-            hoveringLeftOrRight = true
-        end
-
-        if y > self.y and y < self.y + 10 then
-            hoveringTopOrBottom = true
-        elseif y > self.y + self.h - 10 + (self.movable and 20 or 0) and y < self.y + self.h + (self.movable and 20 or 0) then
-            hoveringTopOrBottom = true
-        end
-
-        if hoveringLeftOrRight and hoveringTopOrBottom then
-            hoveringCorner = true
-        end
-
-        if hoveringCorner then
-            -- what side are we on?
-            if x > self.x and x < self.x + 30 then
-                if y > self.y and y < self.y + 30 then
-                    love.mouse.setCursor(love.mouse.getSystemCursor("sizenwse"))
-                elseif y > self.y + self.h - 30 and y < self.y + self.h then
-                    love.mouse.setCursor(love.mouse.getSystemCursor("sizenesw"))
-                end
-            end
-        elseif hoveringTopOrBottom then
-            love.mouse.setCursor(love.mouse.getSystemCursor("sizens"))
-        elseif hoveringLeftOrRight then
-            love.mouse.setCursor(love.mouse.getSystemCursor("sizewe"))
-        else
-            love.mouse.setCursor()
-        end
-
         if self.resizing then
+            local hoveringCorner = false
+            local hoveringTopOrBottom = false
+            local hoveringLeftOrRight = false
+
+            if x > self.x and x < self.x + 10 then
+                hoveringLeftOrRight = true
+            elseif x > self.x + self.w - 10 and x < self.x + self.w then
+                hoveringLeftOrRight = true
+            end
+
+            if y > self.y and y < self.y + 10 then
+                hoveringTopOrBottom = true
+            elseif y > self.y + self.h - 10 + (self.movable and 20 or 0) and y < self.y + self.h + (self.movable and 20 or 0) then
+                hoveringTopOrBottom = true
+            end
+
+            if hoveringLeftOrRight and hoveringTopOrBottom then
+                hoveringCorner = true
+            end
+
+            if hoveringCorner then
+                -- what side are we on?
+                if x > self.x and x < self.x + 30 then
+                    if y > self.y and y < self.y + 30 then
+                        love.mouse.setCursor(love.mouse.getSystemCursor("sizenwse"))
+                    elseif y > self.y + self.h - 30 and y < self.y + self.h then
+                        love.mouse.setCursor(love.mouse.getSystemCursor("sizenesw"))
+                    end
+                end
+            elseif hoveringTopOrBottom then
+                love.mouse.setCursor(love.mouse.getSystemCursor("sizens"))
+            elseif hoveringLeftOrRight then
+                love.mouse.setCursor(love.mouse.getSystemCursor("sizewe"))
+            else
+                love.mouse.setCursor()
+            end
+
             if self.resizingX then
                 if self.onLeft then
                     self.w = self.w + (self.x - x)

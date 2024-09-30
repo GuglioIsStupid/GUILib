@@ -2,17 +2,18 @@ GUI = require("GUI")
 
 local UIWindow = GUI.Window("Test", 0, 0, 700, 700 )
 local UIButton = GUI.Button("Test", 0, 0, 100, 20)
-local UIButton2 = GUI.Button("Test2", 200-50, 20, 100, 20)
+local UISlider = GUI.Slider("Test", 0, 60, 100, 20)
 
 function UIButton:onClick()
     print("Button clicked!")
 end
-function UIButton2:onClick()
-    print("Button2 clicked!")
+
+function UISlider:onUpdate(value)
+    self.text = value
 end
 
 UIWindow:add(UIButton)
-UIWindow:add(UIButton2)
+UIWindow:add(UISlider)
 
 function love.load()
 

@@ -27,6 +27,7 @@ local GUI = {
 local function _init()
     GUI.Window = require(path .. "Objects.Window")
     GUI.Button = require(path .. "Objects.Button")
+    GUI.Slider = require(path .. "Objects.Slider")
 end
 
 _init()
