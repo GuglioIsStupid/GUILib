@@ -59,7 +59,7 @@ end
 
 function Slider.mousemoved(self, x, y, dx, dy)
     if self.display then
-        -- doesn't clamp mouse position properly
+        -- doesn't clamp mouse position properly, but ig it's fine? idk if i get sick of it ill just change a small value
         if self.dragging then
             local newValue = self.min + (x - self.x) / self.w * (self.max - self.min)
             newValue = math.max(self.min, math.min(self.max, newValue))
