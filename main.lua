@@ -1,14 +1,16 @@
 GUI = require("GUI")
 
-local UIWindow = GUI.Window("Test", 0, 0, 200, 200 )
+local UIWindow = GUI.Window("Test", 0, 0, 700, 700 )
 local UIButton = GUI.Button("Test", 0, 0, 100, 20)
 local UIButton2 = GUI.Button("Test2", 200-50, 20, 100, 20)
+
 function UIButton:onClick()
     print("Button clicked!")
 end
 function UIButton2:onClick()
     print("Button2 clicked!")
 end
+
 UIWindow:add(UIButton)
 UIWindow:add(UIButton2)
 

@@ -1,4 +1,5 @@
 local Button = {}
+Button._type = "Button"
 
 function Button.new(tag, x, y, w, h)
     local self = setmetatable({}, {__index = Button})
