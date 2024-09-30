@@ -30,6 +30,11 @@ function Slider.new(tag, x, y, w, h)
     self.knobBorderColour = {0.4, 0.4, 0.4, 1}
     self.knobBorderSize = 2
     self.knobRoundness = 4
+    
+    self.baseWidth = w
+    self.baseHeight = h
+    self.baseX = x
+    self.baseY = y
 
     return self
 end

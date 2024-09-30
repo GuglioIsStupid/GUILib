@@ -20,6 +20,10 @@ function Button.new(tag, x, y, w, h)
     self.textAlign = "center"
     self.callOnReleased = false
     self.onClick = function() end -- override me!
+    self.baseWidth = w
+    self.baseHeight = h
+    self.baseX = x
+    self.baseY = y
 
     return self
 end

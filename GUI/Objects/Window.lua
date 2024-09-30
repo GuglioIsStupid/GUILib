@@ -17,6 +17,22 @@ function Window.new(tag, x, y, w, h)
     self.movable = true
     self.resizeable = false
 
+    self.dragging = false
+    self.draggingX = 0
+    self.draggingY = 0
+
+    self.resizing = false
+    self.resizingX = nil
+    self.resizingY = nil
+    
+    self.onTop = false
+    self.onBottom = false
+    self.onLeft = false
+    self.onRight = false
+
+    self.baseWidth = w
+    self.baseHeight = h
+
     self.members = {}
 
     return self
@@ -40,24 +56,26 @@ function Window.mousepressed(self, x, y, button)
             local wasTopOrBottom = false
             local wasLeftOrRight = false
 
-            if x > self.x and x < self.x + 10 then
-                wasLeftOrRight = true
+            if x > self.x and x < self.x + 10 and y > self.y and y < self.y + 10 then
+                wasCorner = true
+                self.onTop = true
                 self.onLeft = true
-            elseif x > self.x + self.w - 10 and x < self.x + self.w then
-                wasLeftOrRight = true
+            elseif x > self.x + self.w - 10 and x < self.x + self.w and y > self.y + self.h - 10 + (self.movable and 20 or 0) and y < self.y + self.h + (self.movable and 20 or 0) then
+                wasCorner = true
+                self.onBottom = true
                 self.onRight = true
-            end
-
-            if y > self.y and y < self.y + 10 then
+            elseif x > self.x and x < self.x + self.w and y > self.y and y < self.y + 10 then
                 wasTopOrBottom = true
                 self.onTop = true
-            elseif y > self.y + self.h - 10 + (self.movable and 20 or 0) and y < self.y + self.h + (self.movable and 20 or 0) then
+            elseif x > self.x and x < self.x + self.w and y > self.y + self.h - 10 + (self.movable and 20 or 0) and y < self.y + self.h + (self.movable and 20 or 0) then
                 wasTopOrBottom = true
                 self.onBottom = true
-            end
-
-            if wasLeftOrRight and wasTopOrBottom then
-                wasCorner = true
+            elseif x > self.x and x < self.x + 10 and y > self.y and y < self.y + self.h then
+                wasLeftOrRight = true
+                self.onLeft = true
+            elseif x > self.x + self.w - 10 and x < self.x + self.w and y > self.y and y < self.y + self.h then
+                wasLeftOrRight = true
+                self.onRight = true
             end
             
             -- resize the window
@@ -129,26 +147,26 @@ function Window.mousemoved(self, x, y, dx, dy)
             self.y = y - self.draggingY
         end
         
-        if self.resizing then
+        if self.resizeable then
             local hoveringCorner = false
             local hoveringTopOrBottom = false
             local hoveringLeftOrRight = false
 
-            if x > self.x and x < self.x + 10 then
-                hoveringLeftOrRight = true
-            elseif x > self.x + self.w - 10 and x < self.x + self.w then
-                hoveringLeftOrRight = true
-            end
-
-            if y > self.y and y < self.y + 10 then
-                hoveringTopOrBottom = true
-            elseif y > self.y + self.h - 10 + (self.movable and 20 or 0) and y < self.y + self.h + (self.movable and 20 or 0) then
-                hoveringTopOrBottom = true
-            end
-
-            if hoveringLeftOrRight and hoveringTopOrBottom then
+            -- use x, y, w, h to determine if we are hovering over a corner or side, if a side and the top/bottom is also hovered, then it's a corner
+            if x > self.x and x < self.x + 10 and y > self.y and y < self.y + 10 then
                 hoveringCorner = true
+            elseif x > self.x + self.w - 10 and x < self.x + self.w and y > self.y + self.h - 10 + (self.movable and 20 or 0) and y < self.y + self.h + (self.movable and 20 or 0) then
+                hoveringCorner = true
+            elseif x > self.x and x < self.x + self.w and y > self.y and y < self.y + 10 then
+                hoveringTopOrBottom = true
+            elseif x > self.x and x < self.x + self.w and y > self.y + self.h - 10 + (self.movable and 20 or 0) and y < self.y + self.h + (self.movable and 20 or 0) then
+                hoveringTopOrBottom = true
+            elseif x > self.x and x < self.x + 10 and y > self.y and y < self.y + self.h then
+                hoveringLeftOrRight = true
+            elseif x > self.x + self.w - 10 and x < self.x + self.w and y > self.y and y < self.y + self.h then
+                hoveringLeftOrRight = true
             end
+
 
             if hoveringCorner then
                 -- what side are we on?
@@ -167,6 +185,10 @@ function Window.mousemoved(self, x, y, dx, dy)
                 love.mouse.setCursor()
             end
 
+            if not self.resizing then
+                return
+            end
+
             if self.resizingX then
                 if self.onLeft then
                     self.w = self.w + (self.x - x)
@@ -174,6 +196,20 @@ function Window.mousemoved(self, x, y, dx, dy)
                 elseif self.onRight then
                     self.w = self.w + (x - self.x - self.w)
                 end
+
+                -- rescale members based off of baseWidth
+                --[[ for _, member in ipairs(self.members) do
+                    if type(member) == "userdata" then
+                        goto continue
+                    end
+                    if member.baseWidth then
+                        member.w = member.baseWidth * (self.w / self.baseWidth)
+                    end
+                    if member.baseHeight then
+                        member.h = member.baseHeight * (self.h / self.baseHeight)
+                    end
+                    ::continue::
+                end ]]
             end
             if self.resizingY then
                 if self.onTop then
@@ -182,6 +218,36 @@ function Window.mousemoved(self, x, y, dx, dy)
                 elseif self.onBottom then
                     self.h = self.h + (y - self.y - self.h)
                 end
+                
+                -- rescale members based off of baseHeight
+                --[[ for _, member in ipairs(self.members) do
+                    if type(member) == "userdata" then
+                        goto continue
+                    end
+                    if member.baseWidth then
+                        member.w = member.baseWidth * (self.w / self.baseWidth)
+                    end
+                    if member.baseHeight then
+                        member.h = member.baseHeight * (self.h / self.baseHeight)
+                    end
+                    ::continue::
+                end ]]
+            end
+
+            for _, member in ipairs(self.members) do
+                -- keep it aspect-fixed, NOT STRETCHED
+                if type(member) == "userdata" then
+                    goto continue
+                end
+                -- keep it aspect-fixed based off of self.baseWidth and self.baseHeight with the current width and height
+                local scale = 1
+                scale = math.min(self.w / self.baseWidth, self.h / self.baseHeight)
+
+                member.x = member.baseX * scale
+                member.y = member.baseY * scale
+                member.w = member.baseWidth * scale
+                member.h = member.baseHeight * scale
+                ::continue::
             end
         end
 
@@ -197,7 +263,11 @@ function Window.mousemoved(self, x, y, dx, dy)
     end
 end
 
-function Window.add(self, member)
+function Window.add(self, member, x, y, w, h)
+    if type(member) == "userdata" then
+        -- create a "Sprite" object
+        member = Window.Class.Sprite(member, x, y, w, h)
+    end
     table.insert(self.members, member)
 end
 
