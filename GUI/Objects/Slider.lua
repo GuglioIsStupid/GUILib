@@ -1,5 +1,3 @@
--- like FillBar, but has a knob and the value is more locked to the mouse position instead of using dx, dy
-
 local Slider = {}
 Slider._type = "Slider"
 
