@@ -295,6 +295,18 @@ function Window.textinput(self, text)
     end
 end
 
+function Window.filedropped(self, file)
+    if self.display then
+        for _, member in ipairs(self.members) do
+            if type(member) == "userdata" or not member.filedropped then
+                goto continue
+            end
+            member:filedropped(file)
+            ::continue::
+        end
+    end
+end
+
 function Window.add(self, member, x, y, w, h)
     if type(member) == "userdata" then
         -- create a "Sprite" object

@@ -32,6 +32,7 @@ function TextInput.new(tag, x, y, w, h)
     self.cursorColour = {1, 1, 1, 1}
     self.cursorBlinkOn = true
     self.cursorBlinkTimer = 0
+    self.hint = ""
 
     return self
 end
@@ -109,27 +110,6 @@ function TextInput.mousemoved(self, x, y, dx, dy)
 end
 
 function TextInput.draw(self)
-   --[[  if self.display then
-        love.graphics.setColor(self.bgColour)
-        love.graphics.rectangle("fill", self.x, self.y, self.w, self.h, self.roundness, self.roundness)
-        love.graphics.setColor(self.borderColour)
-        love.graphics.setLineWidth(self.borderSize)
-        love.graphics.rectangle("line", self.x, self.y, self.w, self.h, self.roundness, self.roundness)
-
-        love.graphics.setColor(self.textColour)
-        love.graphics.setFont(self.textFont)
-        love.graphics.printf(self.text, self.x + 5, self.y + 5, self.w - 10, self.textAlign)
-
-        if self.active and self.cursorBlinkOn then
-            local font = love.graphics.getFont()
-            local text = self.text:sub(1, self.cursor)
-            local width = font:getWidth(text)
-            love.graphics.setColor(self.cursorColour)
-            love.graphics.setLineWidth(self.cursorWidth)
-            love.graphics.line(self.x + 5 + width, self.y + 5, self.x + 5 + width, self.y + 5 + font:getHeight())
-        end
-    end ]]
-    -- above code, but trim the text to fit the box with leading ...
     if self.display then
         love.graphics.setColor(self.bgColour)
         love.graphics.rectangle("fill", self.x, self.y, self.w, self.h, self.roundness, self.roundness)
@@ -146,8 +126,15 @@ function TextInput.draw(self)
             text = text:sub(1, -2)
             width = font:getWidth(text)
         end
-        print(width)
-        love.graphics.printf(text, self.x + 5, self.y + 5, self.w - 10, self.textAlign)
+
+        if text == "" then
+            if self.hint ~= "" then
+                love.graphics.setColor(0.5, 0.5, 0.5, 1)
+                love.graphics.printf(self.hint, self.x + 5, self.y + 5, self.w - 10, self.textAlign)
+            end
+        else
+            love.graphics.printf(text, self.x + 5, self.y + 5, self.w - 10, self.textAlign)
+        end
 
         if self.active and self.cursorBlinkOn then
             local font = love.graphics.getFont()

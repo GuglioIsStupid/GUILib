@@ -38,6 +38,12 @@ local function _init()
 
     GUI.TextInput = require(path .. "Objects.TextInput")
     GUI.TextInput.Class = GUI
+
+    GUI.FileUpload = require(path .. "Objects.FileUpload")
+    GUI.FileUpload.Class = GUI
+
+    GUI.Dropdown = require(path .. "Objects.Dropdown")
+    GUI.Dropdown.Class = GUI
 end
 
 _init()

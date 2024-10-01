@@ -9,6 +9,17 @@ local ResizeButton = GUI.Button("Resizeable", 0, 0, 100, 20)
 ResizeWindow.resizeable = true
 
 local TextInput = GUI.TextInput("Test", 0, 30, 100, 20)
+TextInput.hint = "Type here!"
+local FileUpload = GUI.FileUpload("Test", 0, 90, 100, 50)
+function FileUpload:onDrop(file)
+    -- if its an image, set the drawable to the image (load file first as it is not even read)
+    print("File dropped: " .. file:getFilename())
+    if file:getFilename():match(".png") or file:getFilename():match(".jpg") or file:getFilename():match(".jpeg") then
+        self.drawable = love.graphics.newImage(file)
+    end
+end
+
+local dropdown = GUI.Dropdown("Test", 0, 310, 100, 20)
 
 function UIButton:onClick()
     print("Button clicked!")
@@ -23,6 +34,7 @@ UIWindow:add(UISlider)
 
 ResizeWindow:add(ResizeButton)
 UIWindow:add(TextInput)
+UIWindow:add(FileUpload)
 
 -- create a test image hard cpded
 local testImg = love.image.newImageData(100, 100)
@@ -33,8 +45,9 @@ for x = 0, 99 do
 end
 testImg = love.graphics.newImage(testImg)
 
-UIWindow:add(testImg, 0, 100, 100, 100)
+UIWindow:add(testImg, 0, 190, 100, 100)
 ResizeWindow:add(testImg, 0, 30, 100, 100)
+UIWindow:add(dropdown)
 
 function love.load()
 
@@ -68,6 +81,11 @@ end
 function love.textinput(text)
     UIWindow:textinput(text)
     ResizeWindow:textinput(text)
+end
+
+function love.filedropped(file)
+    UIWindow:filedropped(file)
+    ResizeWindow:filedropped(file)
 end
 
 function love.draw()
