@@ -8,6 +8,8 @@ local ResizeWindow = GUI.Window("Resizeable", 700, 0, 200, 150)
 local ResizeButton = GUI.Button("Resizeable", 0, 0, 100, 20)
 ResizeWindow.resizeable = true
 
+local TextInput = GUI.TextInput("Test", 0, 30, 100, 20)
+
 function UIButton:onClick()
     print("Button clicked!")
 end
@@ -20,6 +22,7 @@ UIWindow:add(UIButton)
 UIWindow:add(UISlider)
 
 ResizeWindow:add(ResizeButton)
+UIWindow:add(TextInput)
 
 -- create a test image hard cpded
 local testImg = love.image.newImageData(100, 100)
@@ -55,6 +58,16 @@ end
 function love.mousemoved(x, y, dx, dy)
     UIWindow:mousemoved(x, y, dx, dy)
     ResizeWindow:mousemoved(x, y, dx, dy)
+end
+
+function love.keypressed(key)
+    UIWindow:keypressed(key)
+    ResizeWindow:keypressed(key)
+end
+
+function love.textinput(text)
+    UIWindow:textinput(text)
+    ResizeWindow:textinput(text)
 end
 
 function love.draw()

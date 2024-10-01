@@ -41,7 +41,11 @@ end
 function Window.update(self, dt)
     if self.display then
         for _, member in ipairs(self.members) do
+            if type(member) == "userdata" then
+                goto continue
+            end
             member:update(dt)
+            ::continue::
         end
     end
 end
@@ -105,9 +109,13 @@ function Window.mousepressed(self, x, y, button)
 
         for _, member in ipairs(self.members) do
             -- dont press the member if its being clipped by the window
+            if not member.mousepressed then
+                goto continue
+            end
             if x > self.x and x < self.x + self.w and y > self.y and y < self.y + self.h then
                 member:mousepressed(x - self.x, y - self.y - (self.movable and 20 or 0), button)
             end
+            ::continue::
         end
     end
 end
@@ -129,7 +137,7 @@ function Window.mousereleased(self, x, y, button)
         end
 
         for _, member in ipairs(self.members) do
-            if type(member) == "userdata" then
+            if type(member) == "userdata" or not member.mousereleased then
                 goto continue
             end
             if x > self.x and x < self.x + self.w and y > self.y and y < self.y + self.h then
@@ -252,12 +260,36 @@ function Window.mousemoved(self, x, y, dx, dy)
         end
 
         for _, member in ipairs(self.members) do
-            if type(member) == "userdata" then
+            if type(member) == "userdata" or not member.mousemoved then
                 goto continue
             end
             if x > self.x and x < self.x + self.w and y > self.y and y < self.y + self.h then
                 member:mousemoved(x - self.x, y - self.y - (self.movable and 20 or 0), dx, dy)
             end
+            ::continue::
+        end
+    end
+end
+
+function Window.keypressed(self, key)
+    if self.display then
+        for _, member in ipairs(self.members) do
+            if type(member) == "userdata" or not member.keypressed then
+                goto continue
+            end
+            member:keypressed(key)
+            ::continue::
+        end
+    end
+end
+
+function Window.textinput(self, text)
+    if self.display then
+        for _, member in ipairs(self.members) do
+            if type(member) == "userdata" or not member.textinput then
+                goto continue
+            end
+            member:textinput(text)
             ::continue::
         end
     end
